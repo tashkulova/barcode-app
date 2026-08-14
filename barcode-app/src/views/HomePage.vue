@@ -189,12 +189,30 @@ export default defineComponent({
         dialogTitle: 'Barcode teilen'
       });
     },
-    // Öffnen-Logik für URL (In-App-Browser) und PHONE (Standard-Telefon-App)
-    async openBarcode(barcode: BarcodeItem) {
-      if (barcode.valueType === 'URL') {
-        await Browser.open({ url: barcode.displayValue });
-      } else if (barcode.valueType === 'PHONE') {
-        window.open('tel:' + barcode.displayValue);
+    
+    // Hinzugefügte Methode für das Öffnen von URL und PHONE
+    async openBarcode(barcode: any) {
+      try {
+        if (barcode.valueType === 'URL') {
+          let url = barcode.displayValue;
+          
+          // Fix: Stellt sicher, dass immer http/https davorsteht, sonst streikt das Browser-Plugin
+          if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            url = 'https://' + url;
+          }
+          
+          await Browser.open({ url: url });
+          
+        } else if (barcode.valueType === 'PHONE') {
+          // Fix: Entfernt ein eventuell bereits vorhandenes 'tel:' aus dem Barcode-String
+          let phone = barcode.displayValue.replace('tel:', '');
+          
+          // Fix: '_system' weist Capacitor an, die Kontrolle an Android (Telefon-App) zu übergeben
+          window.open('tel:' + phone, '_system');
+        }
+      } catch (error) {
+        console.error("Fehler beim Öffnen: ", error);
+        alert("Aktion konnte nicht ausgeführt werden.");
       }
     }
   }
