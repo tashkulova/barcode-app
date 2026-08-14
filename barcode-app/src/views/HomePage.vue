@@ -23,6 +23,15 @@
                 <strong>Hersteller:</strong> {{ barcode.manufacturer }} | <strong>Land:</strong> {{ barcode.country }}
               </p>
             </ion-label>
+            <!-- Hinzugefügter Button zum Öffnen von URLs oder Anrufen bei PHONE -->
+            <ion-button 
+              v-if="barcode.valueType === 'URL' || barcode.valueType === 'PHONE'" 
+              slot="end" 
+              size="small"
+              @click="openBarcode(barcode)"
+            >
+              {{ barcode.valueType === 'URL' ? 'Browser' : 'Anrufen' }}
+            </ion-button>
           </ion-item>
 
           <ion-item-options side="end">
@@ -40,6 +49,7 @@ import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonIco
 import { scanOutline } from 'ionicons/icons';
 import { BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
 import { Preferences } from '@capacitor/preferences';
+import { Browser } from '@capacitor/browser';
 
 export default defineComponent({
   components: { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonIcon, IonList, IonItem, IonLabel, IonItemSliding, IonItemOptions, IonItemOption },
@@ -94,6 +104,15 @@ export default defineComponent({
     async removeBarcode(id: string) {
       this.barcodes = this.barcodes.filter(b => b.id !== id);
       await Preferences.set({ key: 'barcodes', value: JSON.stringify(this.barcodes) });
+    },
+
+    // Hinzugefügte Methode für das Öffnen von URL und PHONE
+    async openBarcode(barcode: any) {
+      if (barcode.valueType === 'URL') {
+        await Browser.open({ url: barcode.displayValue });
+      } else if (barcode.valueType === 'PHONE') {
+        window.location.href = 'tel:' + barcode.displayValue;
+      }
     }
   }
 });
