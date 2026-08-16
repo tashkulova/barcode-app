@@ -8,7 +8,7 @@
 
     <ion-content class="ion-padding">
       <!-- Button über den ein neuer Barcode per Kamera oder Galerie gescannt werden kann -->
-      <ion-button expand="block" @click="presentScanOptions" class="ion-margin-bottom">
+      <ion-button expand="block" @click="presentScanOptions" class="ion-margin-bottom primary-btn">
         <ion-icon slot="start" :icon="scanOutline"></ion-icon>
         Neuen Barcode scannen
       </ion-button>
@@ -21,12 +21,14 @@
               <h2><strong>Wert:</strong> {{ barcode.displayValue }}</h2>
               <p><strong>Format:</strong> {{ barcode.format }} | <strong>Typ:</strong> {{ barcode.valueType }}</p>
             </ion-label>
+
             <!-- Button zum Öffnen von URLs im In-App-Browser oder PHONE als Anruf -->
             <ion-button 
               v-if="barcode.valueType === 'URL' || barcode.valueType === 'PHONE'" 
               slot="end" 
               fill="solid" 
               size="small"
+              class="secondary-btn"
               @click="openBarcode(barcode)"
             >
               {{ barcode.valueType === 'URL' ? 'Im Browser öffnen' : 'Anrufen' }}
@@ -35,8 +37,8 @@
 
           <!-- Optionen zum Kopieren, Teilen und Löschen über die Listenansicht -->
           <ion-item-options side="end">
-            <ion-item-option color="primary" @click="copyBarcode(barcode)">Kopieren</ion-item-option>
-            <ion-item-option color="tertiary" @click="shareBarcode(barcode)">Teilen</ion-item-option>
+            <ion-item-option color="secondary-btn" @click="copyBarcode(barcode)">Kopieren</ion-item-option>
+            <ion-item-option color="secondary-btn" @click="shareBarcode(barcode)">Teilen</ion-item-option>
             <ion-item-option color="danger" @click="deleteBarcode(barcode.id)">Löschen</ion-item-option>
           </ion-item-options>
         </ion-item-sliding>
@@ -101,6 +103,7 @@ export default defineComponent({
         value: JSON.stringify(this.barcodes)
       });
     },
+
     // Auswahlmenü: Entweder Kamera oder Bild aus Galerie wählen
     async presentScanOptions() {
       const actionSheet = await actionSheetController.create({
@@ -126,6 +129,7 @@ export default defineComponent({
       });
       await actionSheet.present();
     },
+   
     // 1. Kamera-Scan inklusive automatischer Berechtigungsanforderung zur Laufzeit
     async scanWithCamera() {
       try {
@@ -138,6 +142,7 @@ export default defineComponent({
         console.error('Kamera-Scan fehlgeschlagen:', error);
       }
     },
+   
     // 2. Galerie-Scan über den File Picker (bereits aufgenommenes Bild)
     async scanFromGallery() {
       try {
@@ -160,6 +165,7 @@ export default defineComponent({
         console.error('Galerie-Scan fehlgeschlagen:', error);
       }
     },
+   
     // Fügt den gescannten Barcode direkt der Liste hinzu, persistiert ihn und zeigt ihn sofort an
     addBarcodeToList(rawBarcode: any) {
       const newBarcode: BarcodeItem = {
@@ -171,16 +177,19 @@ export default defineComponent({
       this.barcodes.unshift(newBarcode);
       this.saveBarcodes();
     },
+   
     // Löschen eines einzelnen Barcodes über die Listenansicht
     async deleteBarcode(id: string) {
       this.barcodes = this.barcodes.filter(b => b.id !== id);
       await this.saveBarcodes();
     },
+   
     // In Zwischenablage kopieren
     async copyBarcode(barcode: BarcodeItem) {
       await Clipboard.write({ string: barcode.displayValue });
       alert('Erfolgreich in die Zwischenablage kopiert!');
     },
+   
     // Barcode über die Listenansicht teilen
     async shareBarcode(barcode: BarcodeItem) {
       await Share.share({
@@ -190,24 +199,21 @@ export default defineComponent({
       });
     },
     
-    // Hinzugefügte Methode für das Öffnen von URL und PHONE
+    // Methode für das Öffnen von URL und PHONE
     async openBarcode(barcode: any) {
       try {
         if (barcode.valueType === 'URL') {
           let url = barcode.displayValue;
-          
-          // Fix: Stellt sicher, dass immer http/https davorsteht, sonst streikt das Browser-Plugin
+          // Stellt sicher, dass immer http/https davorsteht, sonst streikt das Browser-Plugin
           if (!url.startsWith('http://') && !url.startsWith('https://')) {
             url = 'https://' + url;
           }
-          
           await Browser.open({ url: url });
           
         } else if (barcode.valueType === 'PHONE') {
-          // Fix: Entfernt ein eventuell bereits vorhandenes 'tel:' aus dem Barcode-String
+          // Entfernt ein eventuell bereits vorhandenes 'tel:' aus dem Barcode-String
           let phone = barcode.displayValue.replace('tel:', '');
-          
-          // Fix: '_system' weist Capacitor an, die Kontrolle an Android (Telefon-App) zu übergeben
+          // '_system' weist Capacitor an, die Kontrolle an Android (Telefon-App) zu übergeben
           window.open('tel:' + phone, '_system');
         }
       } catch (error) {

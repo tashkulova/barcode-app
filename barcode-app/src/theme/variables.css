@@ -1,18 +1,25 @@
 /* For information on how to create your own theme, please refer to:
 http://ionicframework.com/docs/theming/ */
 
-/* For information on how to create your own theme, please refer to:
-http://ionicframework.com/docs/theming/ */
-
 :root {
-  --dhbw-red: #A6192E;       /* Das typische DHBW-Dunkelrot */
+  --dhbw-red: #A6192E;       /* Das DHBW-Dunkelrot */
   --dhbw-dark: #222222;      /* Dunkles Anthrazit für Texte */
   --dhbw-light: #F8F9FA;     /* Sehr helles Grau für Hintergründe */
 }
 
+/* Standard-Button (z. B. der Haupt-Scan-Button bleibt DHBW-Rot) */
 ion-button {
   --background: var(--dhbw-red);
   --color: #FFFFFF;
+}
+
+/* Sekundäre Buttons (z. B. für Kopieren, Teilen, Löschen): Hellgrau & Dunkler Text */
+ion-button.secondary-btn, ion-button.action-btn {
+  --background: var(--dhbw-light);
+  --color: var(--dhbw-dark);
+  --border-color: #d1d5db;
+  --border-width: 1px;
+  --border-style: solid;
 }
 
 .dhbw-box {
