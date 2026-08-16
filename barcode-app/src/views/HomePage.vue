@@ -10,7 +10,7 @@
       <!-- Button über den ein neuer Barcode per Kamera oder Galerie gescannt werden kann -->
       <ion-button expand="block" @click="presentScanOptions" class="ion-margin-bottom">
         <ion-icon slot="start" :icon="scanOutline"></ion-icon>
-        Neuen Barcode scannen (Kamera / Galerie)
+        Neuen Barcode scannen
       </ion-button>
 
       <!-- Listenansicht, die alle gescannten Barcodes inklusive Wert (displayValue), Format und Werttyp auflistet -->
@@ -43,7 +43,7 @@
       </ion-list>
 
       <div v-else class="ion-text-center ion-margin-top">
-        <p>Noch keine Barcodes gescannt. Starte den Scanner über den Button oben!</p>
+        <p>Noch keine Barcodes gescannt. Starte den Scanner über den Button oben.</p>
       </div>
     </ion-content>
   </ion-page>
