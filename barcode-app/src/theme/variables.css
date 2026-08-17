@@ -7,7 +7,7 @@ http://ionicframework.com/docs/theming/ */
   --dhbw-light: #F8F9FA;     /* Sehr helles Grau für Hintergründe */
 }
 
-/* Standard-Button (z. B. der Haupt-Scan-Button bleibt DHBW-Rot) */
+/* Standard-Button (z. B. für Haupt-Scan-Button): DHBW-Rot */
 ion-button {
   --background: var(--dhbw-red);
   --color: #FFFFFF;

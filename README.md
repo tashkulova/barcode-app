@@ -36,9 +36,10 @@ Die App basiert auf modernem Web-Stack und nutzt native Capacitor-Plugins:
 3.  *Hinweis:* Aktiviere ggf. in den Android-Einstellungen die "Installation aus unbekannten Quellen".
 4.  Beim ersten Start die Berechtigungen für Kamera und Speicher bestätigen.
 
-## Verwendete KI-Tools & Dokumentation
+## Verwendete Hilfsmittel
 * **Genutztes Tool:** Google Gemini (KI-Assistent)
 * **Einsatzbereich & Zweck:** 
+  * Unterstützung bei der Implementierung der Methode openBarcode() zur typspezifischen Steuerung von URLs und Telefonanrufen.
   * Hilfe beim Debugging von Code-Abschnitten im Bereich des Capacitor-Plugins und der UI-Steuerung via Vue.js.
   * Unterstützung bei der Strukturierung und Ausarbeitung der Präsentationsinhalte.
 

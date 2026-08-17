@@ -87,7 +87,7 @@ export default defineComponent({
     };
   },
   async mounted() {
-    // Persistenz: Beim Start der App gespeicherte Barcodes laden
+    // Beim Start der App gespeicherte Barcodes laden
     await this.loadBarcodes();
   },
   methods: {
@@ -143,7 +143,7 @@ export default defineComponent({
       }
     },
    
-    // 2. Galerie-Scan über den File Picker (bereits aufgenommenes Bild)
+    // 2. Galerie-Scan über den File Picker
     async scanFromGallery() {
       try {
         const image = await Camera.getPhoto({
@@ -171,7 +171,7 @@ export default defineComponent({
       const newBarcode: BarcodeItem = {
         id: Date.now().toString(),
         displayValue: rawBarcode.displayValue || 'Unbekannter Wert',
-        format: rawBarcode.format || 'Unbekannt',
+        format: rawBarcode.format || 'Unbekannte Format',
         valueType: rawBarcode.valueType || 'TEXT'
       };
       this.barcodes.unshift(newBarcode);
@@ -210,12 +210,19 @@ export default defineComponent({
           }
           await Browser.open({ url: url });
           
-        } else if (barcode.valueType === 'PHONE') {
-          // Entfernt ein eventuell bereits vorhandenes 'tel:' aus dem Barcode-String
-          let phone = barcode.displayValue.replace('tel:', '');
-          // '_system' weist Capacitor an, die Kontrolle an Android (Telefon-App) zu übergeben
-          window.open('tel:' + phone, '_system');
-        }
+        else if (barcode.valueType === 'PHONE') {
+            let rawValue = barcode.displayValue;
+            let phone = '';
+
+            if (rawValue.startsWith('tel:')) {
+                // Fall 1: 'tel:' ist bereits vorhanden
+                window.open(phone, '_system');
+            } else if (rawValue.startsWith('+49')) {
+                // Fall 2: Kein 'tel:', aber beginnt mit '+49'
+                phone = rawValue;
+                window.open('tel:' + phone, '_system');
+              }
+          }
       } catch (error) {
         console.error("Fehler beim Öffnen: ", error);
         alert("Aktion konnte nicht ausgeführt werden.");
