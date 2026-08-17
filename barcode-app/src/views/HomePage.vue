@@ -199,30 +199,36 @@ export default defineComponent({
       });
     },
     
-    // Methode für das Öffnen von URL und PHONE
+     // Methode für das Öffnen von URL und PHONE
     async openBarcode(barcode: any) {
       try {
         if (barcode.valueType === 'URL') {
-            await Browser.open({ url: url });
-            
-          } else if (barcode.valueType === 'PHONE') {
-              let rawValue = barcode.displayValue;
-              let phone = '';
-
-              if (rawValue.startsWith('tel:')) {
-                  // Fall 1: 'tel:' ist bereits vorhanden
-                  phone = rawValue.replace('tel:', '');
-                  window.open('tel:' + phone, '_system');
-              } else if (rawValue.startsWith('+49')) {
-                  // Fall 2: Kein 'tel:', aber beginnt mit '+49'
-                  phone = rawValue;
-                  window.open('tel:' + phone, '_system');
-              }
-          } catch (error) {
+          let url = barcode.displayValue;
+           // Stellt sicher, dass immer http/https davorsteht, sonst streikt das Browser-Plugin
+          if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            url = 'https://' + url;
+          }
+           await Browser.open({ url: url });
+          
+        } else if (barcode.valueType === 'PHONE') {
+          let rawValue = barcode.displayValue;
+            let phone = '';
+            if (rawValue.startsWith('tel:')) {
+                // Fall 1: 'tel:' ist bereits vorhanden
+                phone = rawValue.replace('tel:', '');
+                window.open('tel:' + phone, '_system');
+            } else if (rawValue.startsWith('+49')) {
+                // Fall 2: Kein 'tel:', aber beginnt mit '+49'
+                phone = rawValue;
+                window.open('tel:' + phone, '_system');
+            }
+        }
+      } catch (error) {
         console.error("Fehler beim Öffnen: ", error);
         alert("Aktion konnte nicht ausgeführt werden.");
       }
     }
   }
+   
 });
 </script>
