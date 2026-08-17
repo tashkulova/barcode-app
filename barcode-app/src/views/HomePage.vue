@@ -200,7 +200,7 @@ export default defineComponent({
     },
     
      // Methode für das Öffnen von URL und PHONE
-    async openBarcode(barcode: any) {
+     async openBarcode(barcode: any) {
       try {
         if (barcode.valueType === 'URL') {
           let url = barcode.displayValue;
@@ -208,20 +208,13 @@ export default defineComponent({
           if (!url.startsWith('http://') && !url.startsWith('https://')) {
             url = 'https://' + url;
           }
-           await Browser.open({ url: url });
+            await Browser.open({ url: url });
           
         } else if (barcode.valueType === 'PHONE') {
-          let rawValue = barcode.displayValue;
-            let phone = '';
-            if (rawValue.startsWith('tel:')) {
-                // Fall 1: 'tel:' ist bereits vorhanden
-                phone = rawValue.replace('tel:', '');
-                window.open('tel:' + phone, '_system');
-            } else if (rawValue.startsWith('+49')) {
-                // Fall 2: Kein 'tel:', aber beginnt mit '+49'
-                phone = rawValue;
-                window.open('tel:' + phone, '_system');
-            }
+           // Entfernt ein eventuell bereits vorhandenes 'tel:' aus dem Barcode-String
+          let phone = barcode.displayValue.replace('tel:', '');
+           // '_system' weist Capacitor an, die Kontrolle an Android (Telefon-App) zu übergeben
+          window.open('tel:' + phone, '_system');
         }
       } catch (error) {
         console.error("Fehler beim Öffnen: ", error);
@@ -229,6 +222,5 @@ export default defineComponent({
       }
     }
   }
-   
 });
 </script>
